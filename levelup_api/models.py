@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+User._meta.get_field('email')._unique = True
+User._meta.get_field('email').null = False
+
 
 class User(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -51,18 +54,23 @@ class Class(models.Model):
     weeklyPlan = models.TextField()
     enrollment = models.IntegerField()
     # todo: lang_id INT NOT NULL,
-    teacher = models.OneToOneField("levelup_api.Teacher")
+    teacher = models.ForeignKey(
+        "levelup_api.Teacher", on_delete=models.CASCADE)
     # todo: level_id INT NOT NULL,
     image = models.ImageField()
+    books = models.ManyToManyField(
+        "levelup_api.ClassBook", db_table="levelup_api_require_books")
 
 
 class SpeakingExercise(models.Model):
     exerciseLink = models.TextField()
     exerciseDatetime = models.DateTimeField()
     grade = models.FloatField()
-    student = models.OneToOneField("levelup.Student")
-    # todo: lang_id INT NOT NULL,
-    languageNative = models.OneToOneField("levelup.LanguageNative")
+    student = models.ForeignKey(
+        "levelup_api.Student", on_delete=models.CASCADE)
+    # todo: lang_id INT NOT NULL,clear
+    languageNative = models.ForeignKey(
+        "levelup_api.LanguageNative", on_delete=models.CASCADE)
 
 
 class ClassBook(models.Model):
@@ -75,4 +83,5 @@ class Homework(models.Model):
     dueDatetime = models.DateTimeField()
     assignDatetime = models.DateTimeField()
     grade = models.FloatField()
-    givenClass = models.OneToOneField("levelup.Class")
+    givenClass = models.OneToOneField(
+        "levelup_api.Class", on_delete=models.CASCADE)
