@@ -30,5 +30,16 @@ class Teacher(models.Model):
     user = models.OneToOneField(
         "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
-    rating = models.DecimalField()
+    rating = models.FloatField()
     yearsOfExperience = models.IntegerField()
+
+
+class LanguageNative(models.Model):
+    user = models.OneToOneField(
+        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
+    description = models.TextField()
+    rating = models.FloatField()
+
+
+class Class(models.Model):
+    pass
