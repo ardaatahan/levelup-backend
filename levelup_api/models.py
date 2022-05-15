@@ -8,23 +8,27 @@ class User(models.Model):
 
 
 class SystemUser(models.Model):
-    user = models.OneToOneField("levelup_api.User", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
     dateBirth = models.DateField()
     photo = models.ImageField()
 
 
 class SystemAdmin(models.Model):
-    user = models.OneToOneField("levelup_api.User", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
 
 
 class Student(models.Model):
-    user = models.OneToOneField("levelup_api.User", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
     contactNo = models.CharField(max_length=12)
     # add level
 
 
 class Teacher(models.Model):
-    user = models.OneToOneField("levelup_api.User", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     rating = models.DecimalField()
     yearsOfExperience = models.IntegerField()
