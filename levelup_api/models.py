@@ -13,11 +13,11 @@ class User(models.Model):
 class System_User(models.Model):
     user = models.OneToOneField(
         "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
-    dateBirth = models.DateField()
+    date_birth = models.DateField()
     photo = models.ImageField()
 
 
-class SystemAdmin(models.Model):
+class System_Admin(models.Model):
     user = models.OneToOneField(
         "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
 
@@ -33,6 +33,14 @@ class Student(models.Model):
         "levelup_api.Class", db_table="levelup_api_takes")
     requested_exercise = models.ManyToManyField("levelup_api.Language_Native", through="Request_Exercise")
     
+    level = models.ForeignKey("levelup_api.Level", on_delete=models.CASCADE)
+    requested_class = models.ManyToManyField(
+        "levelup_api.Class", db_table="levelup_api_request_class")
+    rate_class = models.ManyToManyField(
+        "levelup_api.Class", through="levelup_api.Rate_Class_Details")
+    rate_exercise = models.ManyToManyField(
+        "levelup_api.Speaking_Exercise", through="levelup_api.Rate_Exercise_Details")
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(
@@ -44,11 +52,13 @@ class Teacher(models.Model):
         "levelup_api.Language", db_table="levelup_api_knows")
 
 
-class LanguageNative(models.Model):
+class Language_Native(models.Model):
     user = models.OneToOneField(
         "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     rating = models.FloatField()
+    speaks = models.ManyToManyField(
+        "levelup_api.Language", on_delete=models.CASCADE, null=False, db_table="levelup_api_speaks")
 
 
 class Class(models.Model):
@@ -56,41 +66,43 @@ class Class(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     duration = models.IntegerField()
-    startDate = models.DateField()
-    endDate = models.DateField()
-    weeklyPlan = models.TextField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    weekly_plan = models.TextField()
     enrollment = models.IntegerField()
-    # todo: lang_id INT NOT NULL,
+    language = models.ForeignKey(
+        "levelup_api.Language", on_delete=models.CASCADE)
     teacher = models.ForeignKey(
         "levelup_api.Teacher", on_delete=models.CASCADE)
-    # todo: level_id INT NOT NULL,
+    level = models.ForeignKey("levelup_api.Level", on_delete=models.CASCADE)
     image = models.ImageField()
     books = models.ManyToManyField(
         "levelup_api.Class_Book", db_table="levelup_api_require_books")
 
 
 class Speaking_Exercise(models.Model):
-    exerciseLink = models.TextField()
-    exerciseDatetime = models.DateTimeField()
+    exercise_link = models.TextField()
+    exercise_datetime = models.DateTimeField()
     grade = models.FloatField()
     student = models.ForeignKey(
         "levelup_api.Student", on_delete=models.CASCADE)
-    # todo: lang_id INT NOT NULL,clear
-    languageNative = models.ForeignKey(
+    language = models.ForeignKey(
+        "levelup_api.Language", on_delete=models.CASCADE)
+    language_native = models.ForeignKey(
         "levelup_api.Language_Native", on_delete=models.CASCADE)
 
 
-class ClassBook(models.Model):
-    bookName = models.TextField()
+class Class_Book(models.Model):
+    book_name = models.TextField()
 
 
 class Homework(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    dueDatetime = models.DateTimeField()
-    assignDatetime = models.DateTimeField()
+    due_datetime = models.DateTimeField()
+    assign_datetime = models.DateTimeField()
     grade = models.FloatField()
-    givenClass = models.OneToOneField(
+    given_class = models.ForeignKey(
         "levelup_api.Class", on_delete=models.CASCADE)
 
 
@@ -103,6 +115,8 @@ class Forum_Topic(models.Model):
     topic_title = models.TextField()
     topic_text = models.TextField()
     topic_owner = models.ForeignKey("levelup_api.System_User", on_delete=models.CASCADE)
+    tags = models.ManyToManyField(
+        "levelup_api.Tag", db_table="levelup_api_topic_tags")
     
 class Forum_Reply_Comment(models.Model):
     datetime = models.DateTimeField()
@@ -117,3 +131,46 @@ class Request_Exercise(models.Model):
     status = models.CharField(max_length=20)
     additional_notes = models.TextField()
     created_at = models.DateTimeField()
+class Homework_Upload(models.Model):
+    homework = models.ForeignKey(
+        "levelup_api.Homework", on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        "levelup_api.Student", on_delete=models.CASCADE)
+    upload_datetime = models.DateTimeField()
+    date = models.FileField()
+
+
+class Level(models.Model):
+    level_title = models.CharField(max_length=80, null=False, unique=True)
+
+
+class Forum_Reply(models.Model):
+    datetime = models.DateTimeField()
+    reply_text = models.TextField()
+    user = models.ForeignKey("levelup_api.System_User",
+                             on_delete=models.CASCADE)
+    topic = models.ForeignKey(
+        "levelup_api.Forum_Topic", on_delete=models.CASCADE)
+
+
+class Tag(models.Model):
+    tag_title = models.CharField(max_length=100, null=False)
+
+
+class Rate_Class_Details(models.Model):
+    rate = models.FloatField()
+    rate_datetime = models.DateTimeField()
+    given_class = models.ForeignKey(
+        "levelup_api.Class", on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        "levelup_api.Student", on_delete=models.CASCADE)
+
+
+class Rate_Exercise_Details(models.Model):
+    rate = models.FloatField()
+    review = models.TextField()
+    rate_datetime = models.DateTimeField()
+    speaking_exercise = models.ForeignKey(
+        "levelup_api.Speaking_Exercise", on_delete=models.CASCADE)
+    student = models.ForeignKey(
+        "levelup_api.Student", on_delete=models.CASCADE)
