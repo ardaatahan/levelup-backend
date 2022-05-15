@@ -2,8 +2,6 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    # path("users", UserListView.as_view()),
-    # path("users/<int:userId>", UserAPIView.as_view()),
     path("classes", ClassListAPIView.as_view()),
     path("classes/<int:classId>", ClassAPIView.as_view()),
     path("class_books", ClassBookListAPIView.as_view()),

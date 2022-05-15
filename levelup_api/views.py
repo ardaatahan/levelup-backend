@@ -452,7 +452,7 @@ class ClassRatingAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, req, classRatingId):
-        classRating = self.getForumReplyObject(
+        classRating = self.getClassRatingObject(
             classRatingId)
         if not classRating:
             return Response(
