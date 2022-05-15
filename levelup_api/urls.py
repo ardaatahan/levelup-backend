@@ -33,5 +33,6 @@ urlpatterns = [
     path("forum_replies", ForumReplyListAPIView.as_view()),
     path("forum_replies/<int:forumReplyId>", ForumReplyAPIView.as_view()),
     path("class_ratings", ClassRatingListAPIView.as_view()),
-    path("class_ratings/<int:classRatingId>", ClassRatingAPIView.as_view()),
+    path("class_ratings/<int:classRatingId>", ClassRatingAPIView.as_view())
 ]
+
