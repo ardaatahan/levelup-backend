@@ -125,7 +125,7 @@ class Forum_Reply_Comment(models.Model):
     comment_text = models.TextField()
     comment_owner = models.ForeignKey(
         "levelup_api.System_User", on_delete=models.CASCADE)
-    reply_owner = models.ForeignKey(
+    reply = models.ForeignKey(
         "levelup_api.Forum_Reply", on_delete=models.CASCADE)
 
 

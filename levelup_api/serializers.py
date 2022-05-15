@@ -84,24 +84,48 @@ class SpeakingExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Speaking_Exercise
         fields = "__all__"
+        
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['student'] = StudentSerializer(instance.student).data
+        response['language'] = LanguageSerializer(instance.language).data
+        response['language_native'] = LanguageNativeSerializer(instance.language_native).data
+        return response
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Homework
         fields = "__all__"
+        
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['given_class'] = ClassSerializer(instance.given_class).data
+        return response 
 
 
 class ForumTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Forum_Topic
         fields = "__all__"
+        
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['topic_owner'] = SystemUserSerializer(instance.forum_topic).data
+        response['tags'] = TagSerializer(instance.tags, many=True).data
+        return response 
 
 
 class RequestExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request_Exercise
         fields = "__all__"
+        
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['student'] = StudentSerializer(instance.student).data
+        response['language_native'] = LanguageNativeSerializer(instance.language_native, many=True).data
+        return response
 
 
 class LevelSerializer(serializers.ModelSerializer):
@@ -120,3 +144,9 @@ class RateExerciseDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate_Exercise_Details
         fields = "__all__"
+        
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['speaking_exercise'] = SpeakingExerciseSerializer(instance.speaking_exercise).data
+        response['student'] = StudentSerializer(instance.student, many=True).data
+        return response
