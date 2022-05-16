@@ -24,7 +24,7 @@ class System_Admin(models.Model):
 
 class Student(models.Model):
     user = models.OneToOneField(
-        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
+        "levelup_api.System_User", on_delete=models.CASCADE, primary_key=True)
     contact_no = models.CharField(max_length=12)
     homeworks = models.ManyToManyField(
         "levelup_api.Homework", db_table="levelup_api_get_hw")
@@ -43,7 +43,7 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(
-        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
+        "levelup_api.System_User", on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     rating = models.FloatField()
     yearsOfExperience = models.IntegerField()
@@ -53,7 +53,7 @@ class Teacher(models.Model):
 
 class Language_Native(models.Model):
     user = models.OneToOneField(
-        "levelup_api.User", on_delete=models.CASCADE, primary_key=True)
+        "levelup_api.System_User", on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     rating = models.FloatField()
     speaks = models.ManyToManyField(
