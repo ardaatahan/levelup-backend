@@ -44,7 +44,6 @@ class SpeakingExerciseListView(APIView):
     def get(self, req, *args, **kwargs):
         #speaking_exercises = Speaking_Exercise.objects.all()
         speaking_exercises = Speaking_Exercise.objects.raw('SELECT * FROM levelup_api_speaking_exercise')
-        print(speaking_exercises.query)
         serializer = SpeakingExerciseSerializer(speaking_exercises, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -107,7 +106,86 @@ class SpeakingExerciseAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
+# Returns all speaking exercises info for a language native
+class SpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        speaking_exercises = cursor.fetchall()
+        return Response(speaking_exercises, status=status.HTTP_200_OK)
+    
+# Returns only ungraded speaking exercises info for a language native
+class UngradedSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id Sp.grade IS NULL'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        speaking_exercises = cursor.fetchall()
+        return Response(speaking_exercises, status=status.HTTP_200_OK)
+    
+# Returns only graded speaking exercises info for a language native
+class GradedSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id Sp.grade IS NOT NULL'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        speaking_exercises = cursor.fetchall()
+        return Response(speaking_exercises, status=status.HTTP_200_OK)
+    
+# Returns only upcoming speaking exercises info for a language native
+class UpcomingSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id AND Sp.exercise_datetime > NOW()'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        speaking_exercises = cursor.fetchall()
+        return Response(speaking_exercises, status=status.HTTP_200_OK)
+    
+# Returns only past speaking exercises info for a language native
+class PastSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id AND Sp.exercise_datetime < NOW()'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        speaking_exercises = cursor.fetchall()
+        return Response(speaking_exercises, status=status.HTTP_200_OK)
+    
+# Returns only pending speaking exercise requests info for a language native
+class RequestedSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, R.requested_datetime, R.additional_notes FROM levelup_api_language_native L, levelup_api_request_exercise R,
+        levelup_api_user U WHERE L.user_id = %s AND L.user_id = R.language_native_id AND R.student_id = U.id AND R.status IS NULL'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        requests = cursor.fetchall()
+        return Response(requests, status=status.HTTP_200_OK)
+    
+# Returns only declined speaking exercise requests info for a language native
+class DeclinedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, R.requested_datetime, R.additional_notes FROM levelup_api_language_native L, levelup_api_request_exercise R,
+        levelup_api_user U WHERE L.user_id = %s AND L.user_id = R.language_native_id AND R.student_id = U.id AND R.status=%s'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id, 'DECLINED'])
+        requests = cursor.fetchall()
+        return Response(requests, status=status.HTTP_200_OK)
+    
+# Returns only accepted speaking exercise requests info for a language native
+class AcceptedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.name, R.requested_datetime, R.additional_notes FROM levelup_api_language_native L, levelup_api_request_exercise R,
+        levelup_api_user U WHERE L.user_id = %s AND L.user_id = R.language_native_id AND R.student_id = U.id AND R.status=%s'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id, 'ACCEPTED'])
+        requests = cursor.fetchall()
+        return Response(requests, status=status.HTTP_200_OK)
+    
 class HomeworkListView(APIView):
     def get(self, req, *args, **kwargs):
        # homeworks = Homework.objects.all()
@@ -190,6 +268,8 @@ class ForumTopicListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ForumSearchByTopicListView(APIView):
+    pass
 class ForumTopicAPIView(APIView):
     def getForumTopicObject(self, topic_id):
         try:

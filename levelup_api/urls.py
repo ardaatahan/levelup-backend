@@ -36,4 +36,12 @@ urlpatterns = [
     path("forum_replies/<int:forumReplyId>", ForumReplyAPIView.as_view()),
     path("class_ratings", ClassRatingListAPIView.as_view()),
     path("class_ratings/<int:classRatingId>", ClassRatingAPIView.as_view()),
+    path("ungraded_exercises", UngradedSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("graded_exercises", GradedSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("upcoming_exercises", UpcomingSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("past_exercises", PastSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("requested_exercises", RequestedSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("declined_exercises", DeclinedRequestedSpeakingExercisesListViewForLanguageNative.as_view()),
+    path("accepted_exercises", AcceptedRequestedSpeakingExercisesListViewForLanguageNative.as_view()),
+    
 ]
