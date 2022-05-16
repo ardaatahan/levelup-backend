@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'levelup_db',
         'USER': 'postgres',
-        'PASSWORD': 'arda2001',
+        'PASSWORD': 'mert1234',
         'HOST': 'localhost',
         'PORT': '5432',
     }
