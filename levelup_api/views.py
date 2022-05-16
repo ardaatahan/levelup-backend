@@ -59,6 +59,23 @@ class SpeakingExerciseListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Lists native speakers according to language and level selected
+class FindNativeSpeakerListAPIView(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''WITH native_rating(language_native_id, avg_rating) AS
+        (
+            SELECT Sp.language_native_id, AVG(R.rate)
+            FROM levelup_api_rate_exercise_details R, levelup_api_speaking_exercise Sp
+            WHERE R.speaking_exercise_id = Sp.id
+            GROUP BY Sp.language_native_id
+        )
+        SELECT U.name, N.avg_rating FROM levelup_api_user U, native_rating N WHERE N.language_native_id = U.id'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        native_speakers = cursor.fetchall()
+        rs = json.dumps(dict(native_speakers)) # rs is a list of tuples, json.dumps converts it to json object
+        return Response(rs, status=status.HTTP_200_OK)
+
 class SpeakingExerciseAPIView(APIView):
     def getExerciseObject(self, exercise_id):
         try:
@@ -121,8 +138,8 @@ class SpeakingExercisesListViewForLanguageNative(APIView):
 # Returns only ungraded speaking exercises info for a language native
 class UngradedSpeakingExercisesListViewForLanguageNative(APIView):
     def get(self, req, *args, **kwargs):
-        sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
-        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id Sp.grade IS NULL'''
+        sql = '''SELECT U.name Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id AND Sp.grade IS NULL'''
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
@@ -133,7 +150,7 @@ class UngradedSpeakingExercisesListViewForLanguageNative(APIView):
 class GradedSpeakingExercisesListViewForLanguageNative(APIView):
     def get(self, req, *args, **kwargs):
         sql = '''SELECT U.name, Sp.exercise_datetime, Sp.exercise_link FROM levelup_api_language_native as L, levelup_api_speaking_exercise as Sp, 
-        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id Sp.grade IS NOT NULL'''
+        levelup_api_user as U WHERE L.user_id = %s AND L.user_id = Sp.language_native_id AND Sp.student_id = U.id AND Sp.grade IS NOT NULL'''
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
@@ -260,7 +277,6 @@ class HomeworkAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
 class ForumTopicListView(APIView):
     def get(self, req, *args, **kwargs):
         #topics = Forum_Topic.objects.all()
@@ -276,9 +292,6 @@ class ForumTopicListView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class ForumSearchByTopicListView(APIView):
-    pass
 class ForumTopicAPIView(APIView):
     def getForumTopicObject(self, topic_id):
         try:
@@ -605,7 +618,31 @@ class RateExerciseDetailsAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
+# Find Classes according to language and level
+class FindClassesListAPIView(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT C.id, C.title, U.name, C.duration, Le.level_title FROM levelup_api_class C, levelup_api_level Le, levelup_api_user U
+        WHERE C.lang_name = %s AND C.level_title = %s AND Le.level_title = C.level_title AND C.teacher_id = U.id'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [self.request.GET.get('lang'), self.request.GET.get('level')]) #query parameters .../?lang="english"..
+        classes = cursor.fetchall()
+        rs = json.dumps(dict(classes))
+        return Response(rs, status=status.HTTP_200_OK)
+    
+# List Classes of a student
+class ClassesOfStudentListAPIView(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT C.title, U.name, La.language_title, Le.level_title, C.start_date, C.end_date 
+        FROM levelup_api_class C, levelup_api_takes T, levelup_api_user U, 
+        levelup_api_language La, levelup_api_level Le
+        WHERE T.student_id = %s AND T.student_id = U.id AND C.id = T.class_id AND La.id = C.language_id AND Le.id = C.level_id'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id]) #query parameters .../?lang="english"..
+        classes = cursor.fetchall()
+        rs = json.dumps(dict(classes))
+        return Response(rs, status=status.HTTP_200_OK)
+    
+    
 class ClassListAPIView(APIView):
     def get(self, req):
         #classes = Class.objects.all()
