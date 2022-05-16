@@ -557,7 +557,7 @@ class ClassBookAPIView(APIView):
         classBook = self.getClassBookObject(classBookId)
         if not classBook:
             return Response(
-                {"res": f"Class with id {classBookId} does not exists"},
+                {"res": f"Class Book with id {classBookId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ClassBookSerializer(classBook)
@@ -567,7 +567,7 @@ class ClassBookAPIView(APIView):
         classBook = self.getClassBookObject(classBookId)
         if not classBook:
             return Response(
-                {"res": f"Class with id {classBookId} does not exists"},
+                {"res": f"Class Book with id {classBookId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ClassBookSerializer(
@@ -581,12 +581,12 @@ class ClassBookAPIView(APIView):
         classBook = self.getClassBookObject(classBookId)
         if not classBook:
             return Response(
-                {"res": f"Class with id {classBookId} does not exists"},
+                {"res": f"Class Book with id {classBookId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         classBook.delete()
         return Response(
-            {"res": f"Class with id {classBookId} has been deleted successfully"},
+            {"res": f"Class Book with id {classBookId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
 
@@ -616,7 +616,7 @@ class LanguageAPIView(APIView):
         language = self.getLanguageObject(languageId)
         if not language:
             return Response(
-                {"res": f"Class with id {languageId} does not exists"},
+                {"res": f"Language with id {languageId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = LanguageSerializer(language)
@@ -626,7 +626,7 @@ class LanguageAPIView(APIView):
         language = self.getLanguageObject(languageId)
         if not language:
             return Response(
-                {"res": f"Class with id {languageId} does not exists"},
+                {"res": f"Language with id {languageId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = LanguageSerializer(
@@ -640,12 +640,12 @@ class LanguageAPIView(APIView):
         language = self.getLanguageObject(languageId)
         if not language:
             return Response(
-                {"res": f"Class with id {languageId} does not exists"},
+                {"res": f"Language with id {languageId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         language.delete()
         return Response(
-            {"res": f"Class with id {languageId} has been deleted successfully"},
+            {"res": f"Language with id {languageId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
 
@@ -676,7 +676,7 @@ class ForumReplyCommentAPIView(APIView):
             forumReplyCommentId)
         if not forumReplyComment:
             return Response(
-                {"res": f"Class with id {forumReplyCommentId} does not exists"},
+                {"res": f"Forum Reply Comment with id {forumReplyCommentId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ForumReplyCommentSerializer(forumReplyComment)
@@ -687,7 +687,7 @@ class ForumReplyCommentAPIView(APIView):
             forumReplyCommentId)
         if not forumReplyComment:
             return Response(
-                {"res": f"Class with id {forumReplyCommentId} does not exists"},
+                {"res": f"Forum Reply Comment with id {forumReplyCommentId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ForumReplyCommentSerializer(
@@ -702,12 +702,12 @@ class ForumReplyCommentAPIView(APIView):
             forumReplyCommentId)
         if not forumReplyComment:
             return Response(
-                {"res": f"Class with id {forumReplyCommentId} does not exists"},
+                {"res": f"Forum Reply Comment with id {forumReplyCommentId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         forumReplyComment.delete()
         return Response(
-            {"res": f"Class with id {forumReplyCommentId} has been deleted successfully"},
+            {"res": f"Forum Reply Comment with id {forumReplyCommentId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
 
@@ -739,7 +739,7 @@ class UploadedHomeworkAPIView(APIView):
             uploadedHomeworkId)
         if not uploadedHomework:
             return Response(
-                {"res": f"Class with id {uploadedHomeworkId} does not exists"},
+                {"res": f"HW Upload with id {uploadedHomeworkId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = HomeworkUploadSerializer(uploadedHomework)
@@ -750,7 +750,7 @@ class UploadedHomeworkAPIView(APIView):
             uploadedHomeworkId)
         if not uploadedHomework:
             return Response(
-                {"res": f"Class with id {uploadedHomeworkId} does not exists"},
+                {"res": f"HW Upload with id {uploadedHomeworkId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = HomeworkUploadSerializer(
@@ -765,12 +765,12 @@ class UploadedHomeworkAPIView(APIView):
             uploadedHomeworkId)
         if not uploadedHomework:
             return Response(
-                {"res": f"Class with id {uploadedHomeworkId} does not exists"},
+                {"res": f"HW Upload with id {uploadedHomeworkId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         uploadedHomework.delete()
         return Response(
-            {"res": f"Class with id {uploadedHomeworkId} has been deleted successfully"},
+            {"res": f"HW Upload with id {uploadedHomeworkId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
 
@@ -802,7 +802,7 @@ class ForumReplyAPIView(APIView):
             forumReplyId)
         if not forumReply:
             return Response(
-                {"res": f"Class with id {forumReplyId} does not exists"},
+                {"res": f"Forum Reply with id {forumReplyId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ForumReplySerializer(forumReply)
@@ -813,7 +813,7 @@ class ForumReplyAPIView(APIView):
             forumReplyId)
         if not forumReply:
             return Response(
-                {"res": f"Class with id {forumReplyId} does not exists"},
+                {"res": f"Forum Reply with id {forumReplyId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = ForumReplySerializer(
@@ -828,12 +828,12 @@ class ForumReplyAPIView(APIView):
             forumReplyId)
         if not forumReply:
             return Response(
-                {"res": f"Class with id {forumReplyId} does not exists"},
+                {"res": f"Forum Reply with id {forumReplyId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         forumReply.delete()
         return Response(
-            {"res": f"Class with id {forumReplyId} has been deleted successfully"},
+            {"res": f"Forum Reply with id {forumReplyId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
 
@@ -865,7 +865,7 @@ class ClassRatingAPIView(APIView):
             classRatingId)
         if not classRating:
             return Response(
-                {"res": f"Class with id {classRatingId} does not exists"},
+                {"res": f"Class Rating with id {classRatingId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = RateClassDetailsSerializer(classRating)
@@ -876,7 +876,7 @@ class ClassRatingAPIView(APIView):
             classRatingId)
         if not classRating:
             return Response(
-                {"res": f"Class with id {classRatingId} does not exists"},
+                {"res": f"Class Rating with id {classRatingId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer = RateClassDetailsSerializer(
@@ -891,11 +891,11 @@ class ClassRatingAPIView(APIView):
             classRatingId)
         if not classRating:
             return Response(
-                {"res": f"Class with id {classRatingId} does not exists"},
+                {"res": f"Class Rating with id {classRatingId} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         classRating.delete()
         return Response(
-            {"res": f"Class with id {classRatingId} has been deleted successfully"},
+            {"res": f"Class Rating with id {classRatingId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
