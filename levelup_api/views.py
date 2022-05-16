@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import connection
+import json
 
 from .models import *
 from .serializers import *
@@ -114,7 +115,8 @@ class SpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
-        return Response(speaking_exercises, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(speaking_exercises)) # rs is a list of tuples, json.dumps converts it to json object
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only ungraded speaking exercises info for a language native
 class UngradedSpeakingExercisesListViewForLanguageNative(APIView):
@@ -124,7 +126,8 @@ class UngradedSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
-        return Response(speaking_exercises, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(speaking_exercises))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only graded speaking exercises info for a language native
 class GradedSpeakingExercisesListViewForLanguageNative(APIView):
@@ -134,7 +137,8 @@ class GradedSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
-        return Response(speaking_exercises, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(speaking_exercises))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only upcoming speaking exercises info for a language native
 class UpcomingSpeakingExercisesListViewForLanguageNative(APIView):
@@ -144,7 +148,8 @@ class UpcomingSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
-        return Response(speaking_exercises, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(speaking_exercises))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only past speaking exercises info for a language native
 class PastSpeakingExercisesListViewForLanguageNative(APIView):
@@ -154,7 +159,8 @@ class PastSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         speaking_exercises = cursor.fetchall()
-        return Response(speaking_exercises, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(speaking_exercises))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only pending speaking exercise requests info for a language native
 class RequestedSpeakingExercisesListViewForLanguageNative(APIView):
@@ -164,7 +170,8 @@ class RequestedSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         requests = cursor.fetchall()
-        return Response(requests, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(requests))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only declined speaking exercise requests info for a language native
 class DeclinedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
@@ -174,7 +181,8 @@ class DeclinedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id, 'DECLINED'])
         requests = cursor.fetchall()
-        return Response(requests, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(requests))
+        return Response(rs, status=status.HTTP_200_OK)
     
 # Returns only accepted speaking exercise requests info for a language native
 class AcceptedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
@@ -184,7 +192,8 @@ class AcceptedRequestedSpeakingExercisesListViewForLanguageNative(APIView):
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id, 'ACCEPTED'])
         requests = cursor.fetchall()
-        return Response(requests, status=status.HTTP_200_OK)
+        rs = json.dumps(dict(requests))
+        return Response(rs, status=status.HTTP_200_OK)
     
 class HomeworkListView(APIView):
     def get(self, req, *args, **kwargs):
