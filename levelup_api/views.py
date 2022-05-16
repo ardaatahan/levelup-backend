@@ -85,7 +85,6 @@ class SpeakingExerciseAPIView(APIView):
                 {"res": f"Speaking Exercise with id {exercise_id} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         serializer = SpeakingExerciseSerializer(
             instance=exerciseObject, data=req.data, partial=True)
         if serializer.is_valid():
