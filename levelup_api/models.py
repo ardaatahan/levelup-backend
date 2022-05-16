@@ -156,7 +156,7 @@ class Level(models.Model):
 class Forum_Reply(models.Model):
     datetime = models.DateTimeField()
     reply_text = models.TextField()
-    user = models.ForeignKey("levelup_api.System_User",
+    reply_owner = models.ForeignKey("levelup_api.System_User",
                              on_delete=models.CASCADE)
     topic = models.ForeignKey(
         "levelup_api.Forum_Topic", on_delete=models.CASCADE)
