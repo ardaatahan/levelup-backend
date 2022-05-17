@@ -125,7 +125,7 @@ class Class(models.Model):
 class Speaking_Exercise(models.Model):
     exercise_link = models.TextField()
     exercise_datetime = models.DateTimeField()
-    grade = models.FloatField()
+    grade = models.FloatField(default=None)
     student = models.ForeignKey(
         "levelup_api.Student", on_delete=models.CASCADE)
     language = models.ForeignKey(
@@ -143,7 +143,7 @@ class Homework(models.Model):
     description = models.TextField()
     due_datetime = models.DateTimeField()
     assign_datetime = models.DateTimeField()
-    grade = models.FloatField()
+    grade = models.FloatField(default=None)
     given_class = models.ForeignKey(
         "levelup_api.Class", on_delete=models.CASCADE)
 
@@ -178,7 +178,7 @@ class Request_Exercise(models.Model):
     language_native = models.ForeignKey(
         "levelup_api.Language_Native", on_delete=models.CASCADE)
     requested_datetime = models.DateTimeField()
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, default=None)
     additional_notes = models.TextField()
     created_at = models.DateTimeField()
 
