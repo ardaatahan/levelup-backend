@@ -566,13 +566,13 @@ class AdminReportNumOfStudentsAPIView(APIView):
      def get(self, req, *args, **kwargs):
         lang = self.request.GET.get('lang')
         level = self.request.GET.get('level')
-        sql = '''SELECT COUNT(DISTINCT S.user_id) FROM levelup_api_student S WHERE S.level_id = %s
-        AND S.user_id IN (SELECT S2.user_id FROM levelup_api_student S2, levelup_api_class C, 
+        sql = '''SELECT COUNT(DISTINCT S.user_id) FROM levelup_api_student S WHERE 
+        S.user_id IN (SELECT S2.user_id FROM levelup_api_student S2, levelup_api_class C, 
         levelup_api_takes T WHERE T.student_id = S2.user_id AND C.language_id = %s) OR S.user_id IN 
         (SELECT S3.user_id FROM levelup_api_student S3, levelup_api_speaking_exercise Sp WHERE S3.user_id = Sp.student_id AND
         Sp.language_id = %s)'''
         cursor = connection.cursor()
-        cursor.execute(sql, [level, lang, lang]) # query parameters .../?lang="English"..
+        cursor.execute(sql, [lang, lang]) # query parameters .../?lang="English"..
         report = cursor.fetchall()
         rs = json.dumps(dict(report))
         return Response(rs, status=status.HTTP_200_OK) 
@@ -580,11 +580,10 @@ class AdminReportNumOfStudentsAPIView(APIView):
 class AdminReportExerciseAveragesAPIView(APIView):
      def get(self, req, *args, **kwargs):
         lang = self.request.GET.get('lang')
-        level = self.request.GET.get('level')
-        sql = '''SELECT AVG(Sp.grade) FROM levelup_api_student S, levelup_api_speaking_exercise Sp
-        WHERE S.level_id = %s AND Sp.lang_id = %s AND Sp.grade IS NOT NULL'''
+        sql = '''SELECT AVG(Sp.grade) FROM levelup_api_speaking_exercise Sp
+        WHERE Sp.lang_id = %s AND Sp.grade IS NOT NULL'''
         cursor = connection.cursor()
-        cursor.execute(sql, [level, lang]) # query parameters .../?lang="English"..
+        cursor.execute(sql, [lang]) # query parameters .../?lang="English"..
         posts = cursor.fetchall()
         rs = json.dumps(dict(posts))
         return Response(rs, status=status.HTTP_200_OK) 
@@ -594,7 +593,7 @@ class AdminReportHomeworkAveragesAPIView(APIView):
         lang = self.request.GET.get('lang')
         level = self.request.GET.get('level')
         sql = '''SELECT AVG(H.grade) FROM levelup_api_student S, levelup_api_homework H
-        WHERE S.level_id = %s AND H.given_class_id IN (SELECT C.id FROM levelup_api_class C WHERE C.language_id = %s)
+        WHERE AND H.given_class_id IN (SELECT C.id FROM levelup_api_class C WHERE C.level_id = %s AND C.language_id = %s)
         AND H.grade IS NOT NULL'''
         cursor = connection.cursor()
         cursor.execute(sql, [level, lang]) # query parameters .../?lang="English"..
