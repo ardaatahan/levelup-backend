@@ -3,6 +3,16 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    path("logout", LogoutAPIView.as_view(), name="logout"),
+    path("system_admin/dashboard", SystemAdminOnlyView.as_view()),
+    path("student/dashboard", StudentOnlyView.as_view()),
+    path("teacher/dashboard", TeacherOnlyView.as_view()),
+    path("language_native/dashboard", LanguageNativeOnlyView.as_view()),
+    path("login", CustomAuthToken.as_view(), name="auth-token"),
+    path("signup/system_admin", SystemAdminSignupAPIView.as_view()),
+    path("signup/student", StudentSignupAPIView.as_view()),
+    path("signup/teacher", TeacherSignupAPIView.as_view()),
+    path("signup/language_native", LanguageNativeSignupAPIView.as_view()),
     path("speaking_exercises", SpeakingExerciseListView.as_view()),
     path("speaking_exercises/<int:exercise_id>",
          SpeakingExerciseAPIView.as_view()),

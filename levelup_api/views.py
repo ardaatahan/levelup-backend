@@ -1,41 +1,127 @@
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+
 
 from .models import *
 from .serializers import *
+from .permissions import *
 
 
-class SystemUserListView(APIView):
-    def get(self, req, *args, **kwargs):
-        system_users = System_User.objects.all()
-        serializer = SystemUserSerializer(system_users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, req, *args, **kwargs):
-        data = {}
+class LogoutAPIView(APIView):
+    def post(self, req, format=None):
+        req.auth.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
-class SystemUserAPIView(APIView):
-    def get(self, req, systemUserId, *args, **kwargs):
-        try:
-            system_user = System_User.objects.get(id=systemUserId)
-        except:
-            system_user = None
-        if not system_user:
-            return Response(
-                {"res": f"System User with id {systemUserId} does not exists"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+class SystemAdminOnlyView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated & IsSystemAdminUser]
+    serializer_class = UserSerializer
 
-        serializer = SystemUserSerializer(system_user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_object(self):
+        return self.request.user
 
-    def put(self, req, systemUserId, *args, **kwargs):
-        pass
 
-    def delete(self, req, systemUserId, *args, **kwargs):
-        pass
+class StudentOnlyView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated & IsStudentUser]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+class TeacherOnlyView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated & IsTeacherUser]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+class LanguageNativeOnlyView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated & IsLanguageNativeUser]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, req):
+        serializer = self.serializer_class(
+            data=req.data, context={'request': req})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'is_system_admin': user.is_system_admin,
+            'is_student': user.is_student,
+            'is_teacher': user.is_teacher,
+            'is_language_native': user.is_language_native,
+        })
+
+
+class SystemAdminSignupAPIView(GenericAPIView):
+    serializer_class = SystemAdminSignupSerializer
+
+    def post(self, req):
+        serializer = SystemAdminSignupSerializer(data=req.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": Token.objects.get(user=user).key,
+            "message": "System Admin account has been created successfully"
+        })
+
+
+class StudentSignupAPIView(GenericAPIView):
+    serializer_class = StudentSignupSerializer
+
+    def post(self, req):
+        serializer = self.get_serializer(data=req.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": Token.objects.get(user=user).key,
+            "message": "Student account has been created successfully"
+        })
+
+
+class TeacherSignupAPIView(GenericAPIView):
+    serializer_class = TeacherSignupSerializer
+
+    def post(self, req):
+        serializer = self.get_serializer(data=req.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": Token.objects.get(user=user).key,
+            "message": "Teacher account has been created successfully"
+        })
+
+
+class LanguageNativeSignupAPIView(GenericAPIView):
+    serializer_class = LanguageNativeSignupSerializer
+
+    def post(self, req):
+        serializer = self.get_serializer(data=req.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": Token.objects.get(user=user).key,
+            "message": "Language Native account has been created successfully"
+        })
 
 
 class SpeakingExerciseListView(APIView):
@@ -341,7 +427,6 @@ class LevelAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         res = levelObject.delete()
-        print(res)
         return Response(
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
