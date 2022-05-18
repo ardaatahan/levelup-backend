@@ -289,13 +289,22 @@ class PastSpeakingExercisesListViewForLanguageNative(APIView):
 class RequestedSpeakingExercisesListViewForLanguageNative(APIView):
     def get(self, req, *args, **kwargs):
         sql = '''SELECT U.id, U.name, R.requested_datetime, R.additional_notes FROM levelup_api_request_exercise R,
-        levelup_api_user U WHERE R.language_native_id = %s AND R.student_id = U.id AND R.status IS NULL'''
+        levelup_api_user U WHERE R.language_native_id = %s AND R.student_id = U.id AND R.status = \'PENDING\''''
         cursor = connection.cursor()
         cursor.execute(sql, [req.user.id])
         requests = dictfetchall(cursor)
         rs = json.dumps(requests, default=str)
         return Response(rs, status=status.HTTP_200_OK)
 
+    def put(self, req):
+        sql = '''UPDATE levelup_api_request_exercise 
+        SET status = %s WHERE levelup_api_request_exercise.id = %s'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [
+            req.data['status'], req.data['id'],
+        ]
+        )
+        return Response({"message": "Exercise request status has been successfully updated"}, status=status.HTTP_200_OK)
 # Returns only declined speaking exercise requests info for a language native
 
 
@@ -358,6 +367,19 @@ class RequestedSpeakingExercisesListAPIViewForStudent(APIView):
         rs = json.dumps(requests, default=str)
         return Response(rs, status=status.HTTP_200_OK)
 
+    def post(self, req):
+        sql = '''INSERT INTO levelup_api_request_exercise (requested_datetime, status,
+        additional_notes, created_at, language_native_id, student_id) VALUES (%s, %s,
+        %s, NOW(), %s, %s)'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [
+            req.data['requested_datetime'], req.data['status'],
+            req.data['additional_notes'], req.data['language_native'],
+            req.data['student']
+        ]
+        )
+        return Response({"message": "Exercise request has been successfully created"}, status=status.HTTP_200_OK)
+
 # Lists language natives according to language and level selected
 
 
@@ -384,7 +406,7 @@ class LanguageNativeListAPIView(APIView):
 
 
 class RequestSpeakingExerciseAPIView(APIView):
-    def get(self, req, native_id, *args, **kwargs):
+    def get(self, req, *args, **kwargs):
         sql = '''WITH native_rating(language_native_id, avg_rating) AS
             (
                 SELECT Sp.language_native_id, AVG(R.rate)
@@ -395,9 +417,9 @@ class RequestSpeakingExerciseAPIView(APIView):
             SELECT U.name, N.avg_rating, L.description FROM levelup_api_user U, native_rating N, levelup_api_language_native L
             WHERE L.user_id = %s AND U.id = L.user_id AND native_rating.language_native_id = U.id'''
         cursor = connection.cursor()
-        cursor.execute(sql, [native_id])
-        classes = cursor.fetchall()
-        rs = json.dumps(dict(classes))
+        cursor.execute(sql, [req.user.id])
+        classes = dictfetchall(cursor)
+        rs = json.dumps(classes, default=str)
         return Response(rs, status=status.HTTP_200_OK)
 
     def post(self, req):
@@ -743,7 +765,6 @@ class LevelListView(APIView):
     def get(self, req, *args, **kwargs):
         #levels = Level.objects.all()
         levels = Level.objects.raw('SELECT * FROM levelup_api_level')
-        print(levels.query)
         serializer = LevelSerializer(levels, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -751,7 +772,6 @@ class LevelListView(APIView):
         serializer = LevelSerializer(data=req.data)
 
         if serializer.is_valid():
-            print(serializer.validated_data)
             cursor = connection.cursor()
             cursor.execute("INSERT INTO levelup_api_level(level_title) VALUES (%s)", [
                            serializer.validated_data['level_title']])
@@ -1466,3 +1486,21 @@ class ClassRatingAPIView(APIView):
             {"res": f"Class Rating with id {classRatingId} has been deleted successfully"},
             status=status.HTTP_200_OK
         )
+
+
+class ClassRequestsListAPIView(APIView):
+    def get(self, req, *args, **kwargs):
+        sql = '''SELECT U.id, U.name, La.lang_name, Le.level_title, C.start_date, C.end_date FROM levelup_api_request_class R,
+        levelup_api_user U, levelup_api_class C, levelup_api_language La, levelup_api_level Le
+        WHERE R.student_id = %s AND R.class_id = C.id AND U.id = C.teacher_id AND La.id = C.language_id AND Le.id = C.level_id'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.user.id])
+        requests = dictfetchall(cursor)
+        rs = json.dumps(requests, default=str)
+        return Response(rs, status=status.HTTP_200_OK)
+
+    def post(self, req):
+        sql = '''INSERT INTO levelup_api_request_class (student_id, class_id) VALUES (%s, %s)'''
+        cursor = connection.cursor()
+        cursor.execute(sql, [req.data['student_id'], req.data['class_id']])
+        return Response({"message": "Class request has been successfully created"}, status=status.HTTP_200_OK)

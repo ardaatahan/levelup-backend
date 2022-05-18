@@ -81,5 +81,5 @@ urlpatterns = [
     path("admin_num_students", AdminReportNumOfStudentsAPIView.as_view()),
     path("admin_exercise_average", AdminReportExerciseAveragesAPIView.as_view()),
     path("admin_homework_average", AdminReportHomeworkAveragesAPIView.as_view()),
-
+    path("class_requests_student", ClassRequestsListAPIView.as_view()),
 ]

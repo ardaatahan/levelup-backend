@@ -145,7 +145,7 @@ class RequestExerciseSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['student'] = StudentSerializer(instance.student).data
         response['language_native'] = LanguageNativeSerializer(
-            instance.language_native, many=True).data
+            instance.language_native).data
         return response
 
 
@@ -372,7 +372,6 @@ class LanguageNativeSignupSerializer(serializers.Serializer):
         }
 
     def save(self, **kwargs):
-        print(self.validated_data)
         user = User(
             username=self.validated_data['username'],
             email=self.validated_data['email'],

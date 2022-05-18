@@ -117,7 +117,7 @@ class Class(models.Model):
     teacher = models.ForeignKey(
         "levelup_api.Teacher", on_delete=models.CASCADE)
     level = models.ForeignKey("levelup_api.Level", on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(default=None)
     books = models.ManyToManyField(
         "levelup_api.Class_Book", db_table="levelup_api_require_books")
 
